@@ -2,6 +2,7 @@ import { Request } from 'express';
 import jwt from 'express-jwt';
 
 import config from '@src/config';
+import { UnauthorizedException } from '@src/utils/CustomError';
 
 /**
  * We are assuming that the JWT will come in a header with the form
@@ -13,7 +14,10 @@ const getTokenFromHeader = (req: Request) => {
   /**
    * @TODO handle Edgs and Explorer cases
    */
-  if ((auth && auth.split(' ')[0] === 'Token') || (auth && auth.split(' ')[0] === 'Bearer')) {
+  if (!auth) {
+    throw new UnauthorizedException('getTokenFromHeader', 'No token was found');
+  }
+  if (auth.split(' ')[0] === 'Token' || auth.split(' ')[0] === 'Bearer') {
     return auth.split(' ')[1];
   }
   return null;

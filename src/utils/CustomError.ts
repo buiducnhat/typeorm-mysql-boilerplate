@@ -17,31 +17,31 @@ export class CustomError extends Error {
   }
 }
 
-export class BadRequestError extends CustomError {
+export class BadRequestException extends CustomError {
   constructor(name = 'Error', ...params) {
     super(name, HttpCode.BAD_REQUEST, HttpStatus.BAD_REQUEST, ...params);
   }
 }
 
-export class UnauthorizedError extends CustomError {
+export class UnauthorizedException extends CustomError {
   constructor(name = 'Error', ...params) {
     super(name, HttpCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED, ...params);
   }
 }
 
-export class ForbiddenError extends CustomError {
+export class ForbiddenException extends CustomError {
   constructor(name = 'Error', ...params) {
     super(name, HttpCode.FORBIDDEN, HttpStatus.FORBIDDEN, ...params);
   }
 }
 
-export class NotFoundError extends CustomError {
+export class NotFoundException extends CustomError {
   constructor(name = 'Error', ...params) {
     super(name, HttpCode.NOT_FOUND, HttpStatus.NOT_FOUND, ...params);
   }
 }
 
-export class GenericError extends CustomError {
+export class GenericException extends CustomError {
   constructor(name = 'Error', ...params) {
     super(name, HttpCode.GENERIC, HttpStatus.GENERIC, ...params);
   }

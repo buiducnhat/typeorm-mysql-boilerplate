@@ -3,7 +3,7 @@ import { Container } from 'typedi';
 
 import middlewares from '@src/api/middlewares';
 import ImageService from '@src/services/image.service';
-import { BadRequestError } from '@src/utils/CustomError';
+import { BadRequestException } from '@src/utils/CustomError';
 import { UserRole } from '@src/entities/User';
 
 const route = Router();
@@ -23,7 +23,7 @@ export default (app: Router) => {
 
         const image = req.file;
         if (!image) {
-          next(new BadRequestError('uploadImage', 'Invalid image'));
+          next(new BadRequestException('uploadImage', 'Invalid image'));
         }
         const result = await imageServiceInstance.upload(image.path);
         return res.status(201).json(result);

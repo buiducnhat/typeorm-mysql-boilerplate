@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import FormData from 'form-data';
 import fs from 'fs';
 import { Logger } from 'winston';
-import { GenericError } from '@src/utils/CustomError';
+import { GenericException } from '@src/utils/CustomError';
 
 @Service()
 export default class ImageService {
@@ -34,7 +34,7 @@ export default class ImageService {
 
       return { url: result };
     } catch (err) {
-      throw new GenericError('uploadImage');
+      throw new GenericException('uploadImage');
     }
   }
 }

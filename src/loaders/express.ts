@@ -2,10 +2,11 @@ import * as express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { isCelebrateError, CelebrateError } from 'celebrate';
+import { UnauthorizedError as JwtUnauthorizedError } from 'express-jwt';
 
 import config from '@src/config';
 import apiRoutes from '@src/api';
-import { CustomError, NotFoundError } from '@src/utils/CustomError';
+import { CustomError, NotFoundException, UnauthorizedException } from '@src/utils/CustomError';
 import LoggerInstance from './logger';
 import { HttpCode, HttpStatus } from '@src/config/constants';
 
@@ -34,7 +35,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use(config.api.prefix, apiRoutes());
 
   app.use((req: Request, res: Response, next: NextFunction) => {
-    next(new NotFoundError('Url not found'));
+    next(new NotFoundException('Url not found'));
   });
 
   // Custom Error Handler
@@ -64,7 +65,7 @@ export default ({ app }: { app: express.Application }) => {
       const code = HttpCode.BAD_REQUEST;
       const status = HttpStatus.BAD_REQUEST;
 
-      LoggerInstance.error(`[${status}/celebrate] - ${code} - ${message}`);
+      LoggerInstance.error(`[${status}/Celebrate] - ${code} - ${message}`);
       return res.status(status).json({
         status,
         message,
@@ -74,19 +75,21 @@ export default ({ app }: { app: express.Application }) => {
     return next(err);
   });
 
-  // // Handle 401 Authorization Error (thrown by express-jwt)
-  // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  //   if (err.name === HttpCode.UNAUTHORIZED) {
-  //     const code = HttpCode.UNAUTHORIZED;
-  //     LoggerInstance.error(`[${code}]Authorization - ${code} - ${err.message}`);
-  //     return res.status(HttpStatus.UNAUTHORIZED).send({
-  //       status: HttpStatus.UNAUTHORIZED,
-  //       error: code,
-  //       message: err.message,
-  //     });
-  //   }
-  //   return next(err);
-  // });
+  // Handle 401 Authorization Error (thrown by express-jwt or custom)
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof JwtUnauthorizedError || UnauthorizedException) {
+      const code = HttpCode.UNAUTHORIZED;
+      LoggerInstance.error(
+        `[${HttpStatus.UNAUTHORIZED}/${err.name || 'Authorization'}] - ${code} - ${err.message}`,
+      );
+      return res.status(HttpStatus.UNAUTHORIZED).send({
+        status: HttpStatus.UNAUTHORIZED,
+        error: code,
+        message: err.message,
+      });
+    }
+    return next(err);
+  });
 
   // Handle Generic Error
   app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

@@ -8,7 +8,7 @@ import config from '@src/config';
 import { User } from '@src/entities/User';
 import { CreateUserDto, UserViewDto } from '@src/dto/user.dto';
 import { randomBytes } from 'crypto';
-import { BadRequestError, GenericError, UnauthorizedError } from '@src/utils/CustomError';
+import { BadRequestException, GenericException, UnauthorizedException } from '@src/utils/CustomError';
 import { convertDto, generateAvatar } from '@src/utils/common';
 
 @Service()
@@ -20,7 +20,7 @@ export default class AuthService {
   public async signUp(userInputDto: CreateUserDto): Promise<{ user: UserViewDto; token: string }> {
     // Check if email is already existed
     if (await this.checkExistUser(userInputDto.email)) {
-      throw new BadRequestError('signUp', 'This email already exists');
+      throw new BadRequestException('signUp', 'This email already exists');
     }
 
     const salt = randomBytes(32);
@@ -37,7 +37,7 @@ export default class AuthService {
     const user = await this.userRepository.save(newUser);
 
     if (!user) {
-      throw new GenericError('signUp');
+      throw new GenericException('signUp');
     }
     const token = this.generateToken(user);
 
@@ -55,7 +55,7 @@ export default class AuthService {
       .getOne();
 
     if (!user) {
-      throw new UnauthorizedError('signIn', 'User with email not found');
+      throw new UnauthorizedException('signIn', 'User with email not found');
     }
 
     // We use verify from argon2 to prevent 'timing based' attacks
@@ -64,7 +64,7 @@ export default class AuthService {
       const token = this.generateToken(user, remember);
       return { token, user: _.omit(user, ['password', 'salt']) };
     } else {
-      throw new UnauthorizedError('signIn', 'Wrong password');
+      throw new UnauthorizedException('signIn', 'Wrong password');
     }
   }
 
