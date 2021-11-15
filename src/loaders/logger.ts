@@ -3,12 +3,15 @@ import * as winston from 'winston';
 import config from '@src/config';
 
 const transports = [];
-if (process.env.NODE_ENV !== 'development') {
-  transports.push(new winston.transports.Console());
-} else {
+transports.push(
+  new winston.transports.Console({
+    format: winston.format.combine(winston.format.cli(), winston.format.splat()),
+  }),
+);
+if (process.env.NODE_ENV === 'production') {
   transports.push(
-    new winston.transports.Console({
-      format: winston.format.combine(winston.format.cli(), winston.format.splat()),
+    new winston.transports.File({
+      filename: 'logs/app.log',
     }),
   );
 }

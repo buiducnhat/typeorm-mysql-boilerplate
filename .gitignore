@@ -7,6 +7,7 @@ node_modules
 
 # Built source code
 build
+dist
 
 # Temporary files and folders
 tmp
@@ -16,6 +17,7 @@ temp
 .env
 
 # Logs
+logs/
 log
 npm-debug.log
 
