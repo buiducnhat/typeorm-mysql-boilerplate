@@ -12,12 +12,12 @@ let entitiesPath: string,
 
 switch (process.env.NODE_ENV) {
   case RUN_MODE.prod:
-    entitiesPath = 'build/src/entities/*.js';
-    migrationsPath = 'build/src/migrations/*.js';
-    subscribersPath = 'build/src/subscriber/*.js';
-    entitiesDir = 'build/src/entity';
-    migrationsDir = 'build/src/migrations';
-    subscribersDir = 'build/src/subscriber';
+    entitiesPath = 'dist/src/entities/*.js';
+    migrationsPath = 'dist/src/migrations/*.js';
+    subscribersPath = 'dist/src/subscriber/*.js';
+    entitiesDir = 'dist/src/entity';
+    migrationsDir = 'dist/src/migrations';
+    subscribersDir = 'dist/src/subscriber';
     break;
   case RUN_MODE.dev:
     entitiesPath = 'src/entities/*.ts';
