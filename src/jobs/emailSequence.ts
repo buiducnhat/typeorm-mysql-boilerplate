@@ -7,6 +7,7 @@ export default class EmailSequenceJob {
     const Logger: Logger = Container.get('logger');
     try {
       Logger.debug('✌️ Email Sequence Job triggered!');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { email, name }: { [key: string]: string } = job.attrs.data;
       const mailerServiceInstance = Container.get(MailerService);
       await mailerServiceInstance.SendWelcomeEmail(email);

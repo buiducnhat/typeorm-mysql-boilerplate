@@ -1,40 +1,97 @@
-import Container, { Service, Inject } from 'typedi';
-import axios, { AxiosRequestConfig } from 'axios';
-import FormData from 'form-data';
-import fs from 'fs';
-import { Logger } from 'winston';
-import { GenericException } from '@src/utils/CustomError';
+import { Service, Inject } from 'typedi';
+import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
+import * as argon2 from 'argon2';
+import * as _ from 'lodash';
+
+import config from '@src/config';
+import { User } from '@src/entities/User';
+import { CreateUserDto, UserViewDto } from '@src/dto/user.dto';
+import { randomBytes } from 'crypto';
+import {
+  BadRequestException,
+  GenericException,
+  UnauthorizedException,
+} from '@src/utils/CustomError';
+import { convertDto, generateAvatar } from '@src/utils/common';
 
 @Service()
-export default class ImageService {
-  logger: Logger;
+export default class AuthService {
+  serviceName: string;
 
-  constructor() {
-    this.logger = Container.get('logger') as Logger;
+  constructor(@Inject('userRepository') private userRepository: Repository<User>) {}
+
+  public async signUp(userInputDto: CreateUserDto): Promise<{ user: UserViewDto; token: string }> {
+    // Check if email is already existed
+    if (await this.checkExistUser(userInputDto.email)) {
+      throw new BadRequestException('signUp', 'This email already exists');
+    }
+
+    const salt = randomBytes(32);
+    const hashedPassword = await argon2.hash(userInputDto.password, { salt });
+
+    const newUser: User = new User();
+    convertDto(userInputDto, newUser);
+    newUser.salt = salt.toString('hex');
+    newUser.password = hashedPassword;
+    if (!newUser.avatar) {
+      newUser.avatar = await generateAvatar(userInputDto.firstName, userInputDto.lastName);
+    }
+
+    const user = await this.userRepository.save(newUser);
+
+    if (!user) {
+      throw new GenericException('signUp');
+    }
+    const token = this.generateToken(user);
+
+    return { token, user: _.omit(user, ['password', 'salt']) };
   }
 
-  public async upload(path: string): Promise<{ url: string }> {
-    try {
-      const formData = new FormData();
-      formData.append('image', fs.createReadStream(path));
-      formData.append('type', 'file');
-      const config: AxiosRequestConfig = {
-        method: 'POST',
-        url: 'https://api.imgur.com/3/upload',
-        headers: {
-          ...formData.getHeaders(),
-        },
-        data: formData,
-      };
+  public async signIn(
+    email: string,
+    password: string,
+    remember: boolean,
+  ): Promise<{ user: UserViewDto; token: string }> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email })
+      .getOne();
 
-      const response = await axios(config);
-      const result = response.data.data.link;
-
-      fs.unlinkSync(path);
-
-      return { url: result };
-    } catch (err) {
-      throw new GenericException('uploadImage');
+    if (!user) {
+      throw new UnauthorizedException('signIn', 'User with email not found');
     }
+
+    // We use verify from argon2 to prevent 'timing based' attacks
+    const validPassword = await argon2.verify(user.password, password);
+    if (validPassword) {
+      const token = this.generateToken(user, remember);
+      return { token, user: _.omit(user, ['password', 'salt']) };
+    } else {
+      throw new UnauthorizedException('signIn', 'Wrong password');
+    }
+  }
+
+  private async checkExistUser(email: string): Promise<boolean> {
+    const userCount = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email: email })
+      .getCount();
+
+    return userCount > 0;
+  }
+
+  private generateToken(user: User, isLongExpire = false) {
+    const jwtAlgorithm = config.jwtAlgorithm;
+    return jwt.sign(
+      {
+        id: user.id,
+      },
+      config.jwtSecret,
+      {
+        algorithm: jwtAlgorithm,
+        expiresIn: isLongExpire ? config.jwtExpireTimeLong : config.jwtExpireTimeNormal,
+      },
+    );
   }
 }

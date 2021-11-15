@@ -26,6 +26,7 @@ export default ({ app }: { app: express.Application }) => {
   app.use(cors());
 
   // "Lets you use HTTP verbs such as PUT or DELETE in places where the client doesn't support it."
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   app.use(require('method-override')());
 
   // Middleware that transforms the raw string of req.body into json
