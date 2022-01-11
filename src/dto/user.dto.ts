@@ -9,4 +9,9 @@ export interface CreateUserDto {
   password: string;
 }
 
-export type UserViewDto = Omit<User, 'password' | 'salt'>;
+export interface ChangePasswordDto {
+  oldPassword: string;
+  newPassword: string;
+}
+
+export type UserBasicDto = Omit<User, 'password' | 'salt'>;

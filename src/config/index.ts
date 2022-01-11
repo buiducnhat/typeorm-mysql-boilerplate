@@ -15,12 +15,13 @@ export default {
    * Server config
    */
   port: parseInt(process.env.PORT, 10),
+  host: process.env.HOST,
 
   /**
    * Your secret sauce
    */
   jwtSecret: process.env.JWT_SECRET,
-  jwtAlgorithm: (process.env.JWT_ALGO as IJWTAlgorithm) || 'HS256',
+  jwtAlgorithm: 'HS256' as IJWTAlgorithm,
   jwtExpireTimeNormal: process.env.JWT_EXPIRE_NORMAL,
   jwtExpireTimeLong: process.env.JWT_EXPIRE_LONG,
 

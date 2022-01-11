@@ -6,9 +6,13 @@ import * as _ from 'lodash';
 
 import config from '@src/config';
 import { User } from '@src/entities/User';
-import { CreateUserDto, UserViewDto } from '@src/dto/user.dto';
+import { ChangePasswordDto, CreateUserDto, UserBasicDto } from '@src/dto/user.dto';
 import { randomBytes } from 'crypto';
-import { BadRequestException, GenericException, UnauthorizedException } from '@src/utils/CustomError';
+import {
+  BadRequestException,
+  GenericException,
+  UnauthorizedException,
+} from '@src/utils/CustomError';
 import { convertDto, generateAvatar } from '@src/utils/common';
 
 @Service()
@@ -17,7 +21,7 @@ export default class AuthService {
 
   constructor(@Inject('userRepository') private userRepository: Repository<User>) {}
 
-  public async signUp(userInputDto: CreateUserDto): Promise<{ user: UserViewDto; token: string }> {
+  public async signUp(userInputDto: CreateUserDto): Promise<{ user: UserBasicDto; token: string }> {
     // Check if email is already existed
     if (await this.checkExistUser(userInputDto.email)) {
       throw new BadRequestException('signUp', 'This email already exists');
@@ -48,7 +52,7 @@ export default class AuthService {
     email: string,
     password: string,
     remember: boolean,
-  ): Promise<{ user: UserViewDto; token: string }> {
+  ): Promise<{ user: UserBasicDto; token: string }> {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email: email })
@@ -77,7 +81,27 @@ export default class AuthService {
     return userCount > 0;
   }
 
-  private generateToken(user: User, isLongExpire: boolean = false) {
+  public async changePassword(
+    userId: number | string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<UserBasicDto> {
+    let user = await this.userRepository.findOne(userId);
+
+    // compare oldPassword with password in db
+    const validPassword = await argon2.verify(user.password, changePasswordDto.oldPassword);
+    if (!validPassword) {
+      throw new UnauthorizedException('changePassword', 'Wrong password');
+    }
+
+    // hash newPassword
+    user.password = await argon2.hash(changePasswordDto.newPassword, {
+      salt: Buffer.from(user.salt),
+    });
+    user = await this.userRepository.save(user);
+    return _.omit(user, ['password', 'salt']);
+  }
+
+  private generateToken(user: User, isLongExpire = false) {
     const jwtAlgorithm = config.jwtAlgorithm;
     return jwt.sign(
       {

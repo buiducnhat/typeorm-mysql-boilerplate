@@ -1,6 +1,6 @@
 import { Service, Inject } from 'typedi';
 
-import { UserViewDto } from '@src/dto/user.dto';
+import { UserBasicDto } from '@src/dto/user.dto';
 
 @Service()
 export default class MailerService {
@@ -18,7 +18,7 @@ export default class MailerService {
     return { delivered: 1, status: 'ok' };
   }
 
-  public StartEmailSequence(sequence: string, user: Partial<UserViewDto>) {
+  public StartEmailSequence(sequence: string, user: Partial<UserBasicDto>) {
     if (!user.email) {
       throw new Error('No email provided');
     }

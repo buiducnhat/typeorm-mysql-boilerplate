@@ -4,9 +4,10 @@ declare global {
   namespace Express {
     export interface Request {
       token: {
-        id: string;
+        id: number | string;
       };
       currentUser: Omit<UserEntity, 'password' | 'salt'>;
+      hasPermission: boolean;
     }
   }
 }
