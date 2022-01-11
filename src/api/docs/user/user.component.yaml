@@ -1,0 +1,91 @@
+components:
+  schemas:
+    UserBasicDto:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+          example: '0949494949'
+        avatar:
+          type: string
+          example: https://i.imgur.com/Bb5j7UY.jpg
+        role:
+          type: string
+          enum:
+            - Admin
+            - Member
+          example: Member
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UserViewDto:
+      allOf:
+        - $ref: '#components/schemas/UserBasicDto'
+        - type: object
+          properties:
+            account:
+              $ref: '#components/schemas/AccountBasic'
+
+    UpdateUserDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Ricardo
+        lastName:
+          type: string
+          example: Milos
+
+    UpdateAvatarDto:
+      type: object
+      properties:
+        avatar:
+          type: string
+          example: https://i.imgur.com/Bb5j7UY.jpg
+
+    UpdateRoleDto:
+      type: object
+      properties:
+        userId:
+          type: number
+          example: 7
+        role:
+          type: string
+          enum: ['admin', 'staff', 'member']
+          example: 'staff'
+
+    BlockUserDto:
+      type: object
+      properties:
+        userId:
+          type: number
+          example: 7
+        isActive:
+          type: boolean
+          example: true
+
+    PaginatedUsersDto:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#components/schemas/UserViewDto'
+        meta:
+          $ref: '#components/schemas/PaginationMetaDto'
