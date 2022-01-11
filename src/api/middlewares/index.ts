@@ -1,13 +1,17 @@
 import attachCurrentUser from './attachCurrentUser';
-import checkRole from './checkRole';
+import { checkRole, checkPermission } from './checkRole';
 import isAuth from './isAuth';
+import isOptionalAuth from './isOptionalAuth';
+import { uploadImageByDisk, uploadImageByMemory } from './multerUpload';
 import * as validators from './validators';
-import { uploadImage } from './multerUpload';
 
 export default {
   attachCurrentUser,
   isAuth,
-  validators,
+  isOptionalAuth,
   checkRole,
-  uploadImage,
+  checkPermission,
+  validators,
+  uploadImageByMemory,
+  uploadImageByDisk,
 };

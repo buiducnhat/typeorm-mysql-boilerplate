@@ -57,4 +57,13 @@ export default {
     apiUsername: process.env.MAILGUN_USERNAME,
     domain: process.env.MAILGUN_DOMAIN,
   },
+  /**
+   * Cloudinary config
+   */
+  cloudinary: {
+    folder: process.env.CLOUDINARY_FOLDER,
+    name: process.env.CLOUDINARY_NAME,
+    apiKey: process.env.CLOUDINARY_API_KEY,
+    apiSecret: process.env.CLOUDINARY_API_SECRET,
+  },
 };
