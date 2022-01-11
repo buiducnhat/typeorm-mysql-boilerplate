@@ -1,5 +1,1 @@
-import authValidators from './auth';
-
-export default {
-  authValidators,
-};
+export { default as authValidators } from './auth.validator';

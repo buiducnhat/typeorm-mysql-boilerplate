@@ -11,7 +11,7 @@ const imageFilter = (req, file, cb) => {
   }
 };
 
-const imageStorage = multer.diskStorage({
+const diskStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, IMAGE_PATH);
   },
@@ -20,4 +20,7 @@ const imageStorage = multer.diskStorage({
   },
 });
 
-export const uploadImage = multer({ storage: imageStorage, fileFilter: imageFilter });
+const memoryStorage = multer.memoryStorage();
+
+export const uploadImageByDisk = multer({ storage: diskStorage, fileFilter: imageFilter });
+export const uploadImageByMemory = multer({ storage: memoryStorage, fileFilter: imageFilter });

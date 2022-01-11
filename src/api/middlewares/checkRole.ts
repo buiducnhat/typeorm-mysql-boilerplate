@@ -1,14 +1,29 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { ForbiddenException } from '@src/utils/CustomError';
 import {} from '@src/types/express';
+import { ForbiddenException } from '@src/utils/CustomError';
 
-const checkRole = (roles: string[]) => async (req: Request, res: Response, next: NextFunction) => {
-  const curRole = req.currentUser.role;
-  if (!roles.includes(curRole)) {
-    return next(new ForbiddenException('checkRole', 'No permissions to do this action'));
+export const checkRole = (roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.currentUser || !req.currentUser.role) {
+      req.hasPermission = false;
+    } else {
+      req.hasPermission = roles.includes(req.currentUser.role);
+    }
+    next();
+  } catch (error) {
+    next(error);
   }
-  next();
 };
 
-export default checkRole;
+export const checkPermission = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.hasPermission) {
+      throw new ForbiddenException('checkPermission', 'No permissions to do this action');
+    } else {
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+};

@@ -8,18 +8,29 @@ import { User } from '@src/entities/User';
 import { UnauthorizedException } from '@src/utils/CustomError';
 
 const attachCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
-  const userRepository = Container.get('userRepository') as Repository<User>;
+  try {
+    if (!req.token) {
+      req.currentUser = null;
+      return next();
+    }
 
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where('user.id = :id', { id: req.token.id })
-    .getOne();
+    const userRepository = Container.get('userRepository') as Repository<User>;
 
-  if (!user) {
-    return next(new UnauthorizedException('attachCurrentUSer'));
+    const user = await userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.account', 'account')
+      .where('user.id = :id', { id: req.token.id })
+      .getOne();
+
+    if (!user) {
+      throw new UnauthorizedException('Authorize user fail');
+    }
+    req.currentUser = _.omit(user, ['password', 'salt']);
+    req.hasPermission = true;
+    next();
+  } catch (error) {
+    return next(error);
   }
-  req.currentUser = _.omit(user, ['password', 'salt']);
-  next();
 };
 
 export default attachCurrentUser;
