@@ -1,7 +1,7 @@
 {
-  "name": "gerpan-express-typeorm-boilerplate",
+  "name": "typeorm-mysql-boilerplate",
   "version": "1.0.0",
-  "description": "gerpan-express-typeorm-boilerplate",
+  "description": "typeorm-mysql-boilerplate",
   "main": "src/app.ts",
   "scripts": {
     "build": "rm -rf dist && ttsc -p tsconfig.json",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gerpann/gerpan-express-typeorm-boilerplate"
+    "url": "git+https://github.com/gerpann/typeorm-mysql-boilerplate"
   },
   "keywords": [
     "boilerplay",
