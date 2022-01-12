@@ -1,8 +1,8 @@
-import attachCurrentUser from './attachCurrentUser';
-import { checkRole, checkPermission } from './checkRole';
-import isAuth from './isAuth';
-import isOptionalAuth from './isOptionalAuth';
-import { uploadImageByDisk, uploadImageByMemory } from './multerUpload';
+import attachCurrentUser from './attach-user.middleware';
+import { checkRole, checkPermission } from './check-role.middleware';
+import isAuth from './is-auth.middleware';
+import isOptionalAuth from './is-optional-auth.middleware';
+import { uploadImageByDisk, uploadImageByMemory } from './multer-upload.middleware';
 import * as validators from './validators';
 
 export default {

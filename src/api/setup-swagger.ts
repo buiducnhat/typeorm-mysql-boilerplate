@@ -28,7 +28,15 @@ const options: swaggerJSDoc.OAS3Options = {
       { url: `http://localhost:${config.port}/${config.api.prefix}`, description: 'Local server' },
     ],
   },
-  apis: [`${appRootPath}/src/api/docs/**/*.yaml`],
+  // If use this config, the route in document will be order by alphabet
+  // apis: [`${appRootPath}/src/api/docs/**/*.yaml`],
+  // Use this instead for suitable order
+  apis: [
+    `${appRootPath}/src/api/docs/auth/*.yaml`,
+    `${appRootPath}/src/api/docs/user/*.yaml`,
+    `${appRootPath}/src/api/docs/pagination/*.yaml`,
+    `${appRootPath}/src/api/docs/error/*.yaml`,
+  ],
 };
 
 const swaggerSpec = swaggerJSDoc(options);

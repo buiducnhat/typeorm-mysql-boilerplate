@@ -5,15 +5,15 @@ import * as argon2 from 'argon2';
 import * as _ from 'lodash';
 
 import config from '@src/config';
-import { User } from '@src/entities/User';
+import { User } from '@src/entities/user.entity';
 import { ChangePasswordDto, CreateUserDto, UserBasicDto } from '@src/dto/user.dto';
 import { randomBytes } from 'crypto';
 import {
   BadRequestException,
   GenericException,
   UnauthorizedException,
-} from '@src/utils/CustomError';
-import { convertDto, generateAvatar } from '@src/utils/common';
+} from '@src/utils/custom-error.util';
+import { convertDto, generateAvatar } from '@src/utils/common.util';
 
 @Service()
 export default class AuthService {

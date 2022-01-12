@@ -6,7 +6,7 @@ import { UnauthorizedError as JwtUnauthorizedError } from 'express-jwt';
 
 import config from '@src/config';
 import apiRoutes from '@src/api';
-import { CustomError, NotFoundException, UnauthorizedException } from '@src/utils/CustomError';
+import { CustomError, NotFoundException, UnauthorizedException } from '@src/utils/custom-error.util';
 import LoggerInstance from './logger';
 import { HttpCode, HttpStatus } from '@src/config/constants';
 

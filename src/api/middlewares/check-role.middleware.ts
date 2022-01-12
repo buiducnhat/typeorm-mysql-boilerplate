@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
 import {} from '@src/types/express';
-import { ForbiddenException } from '@src/utils/CustomError';
+import { ForbiddenException } from '@src/utils/custom-error.util';
 
 export const checkRole = (roles: string[]) => (req: Request, res: Response, next: NextFunction) => {
   try {

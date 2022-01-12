@@ -3,7 +3,7 @@ import { Container } from 'typedi';
 
 import middlewares from '@src/api/middlewares';
 import ImageService from '@src/services/image.service';
-import { BadRequestException } from '@src/utils/CustomError';
+import { BadRequestException } from '@src/utils/custom-error.util';
 
 const route = Router();
 
