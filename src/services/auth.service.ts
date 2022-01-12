@@ -12,7 +12,7 @@ import {
   BadRequestException,
   GenericException,
   UnauthorizedException,
-} from '@src/utils/custom-error.util';
+} from '@src/config/custom-error.config';
 import { convertDto, generateAvatar } from '@src/utils/common.util';
 
 @Service()

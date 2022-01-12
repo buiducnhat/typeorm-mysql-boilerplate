@@ -10,7 +10,7 @@ import {
   CustomError,
   NotFoundException,
   UnauthorizedException,
-} from '@src/utils/custom-error.util';
+} from '@src/config/custom-error.config';
 import LoggerInstance from './logger';
 import { HttpCode, HttpStatus } from '@src/config/constants';
 
