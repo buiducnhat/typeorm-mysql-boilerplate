@@ -1,8 +1,8 @@
 import expressLoader from './express';
-import dependencyInjectorLoder from './dependencyInjector';
+import dependencyInjectorLoder from './dependency-injector';
 import databaseLoader from './database';
 import Logger from './logger';
-import { User } from '@src/entities/User';
+import { User } from '@src/entities/user.entity';
 
 export default async ({ expressApp }) => {
   const runMode = process.env.NODE_ENV;

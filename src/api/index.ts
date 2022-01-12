@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import authApi from './routes/auth';
-import userApi from './routes/user';
+import authApi from './routes/auth.route';
+import userApi from './routes/user.route';
 
 import setupSwagger from './setup-swagger';
 

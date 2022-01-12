@@ -4,8 +4,8 @@ import * as _ from 'lodash';
 import { Repository } from 'typeorm';
 
 import {} from '@src/types/express';
-import { User } from '@src/entities/User';
-import { UnauthorizedException } from '@src/utils/CustomError';
+import { User } from '@src/entities/user.entity';
+import { UnauthorizedException } from '@src/config/custom-error.config';
 
 const attachCurrentUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -18,7 +18,6 @@ const attachCurrentUser = async (req: Request, res: Response, next: NextFunction
 
     const user = await userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.account', 'account')
       .where('user.id = :id', { id: req.token.id })
       .getOne();
 
