@@ -42,7 +42,7 @@ components:
         token:
           type: string
         user:
-          $ref: '#components/schemas/UserViewDto'
+          $ref: '#components/schemas/UserBasicDto'
 
     ChangePasswordDto:
       type: object
